@@ -35,4 +35,8 @@ public class BlogAddViewModel extends AndroidViewModel {
         repo.insertBlog(blog);
     }
 
+    public void updateToDb(Blog blog) {
+        repo.updateBlog(blog);
+    }
+
 }

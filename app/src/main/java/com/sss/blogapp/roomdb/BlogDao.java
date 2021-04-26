@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -33,6 +35,12 @@ public interface BlogDao {
 
     @Query("SELECT aid FROM blog_tbl ORDER BY aid DESC LIMIT 1")
     Integer lastAuthorId();
+
+//    @Query("UPDATE blog_tbl SET title=:title, description =:description, categories =:categories, name =:name, profession =:profession")
+//    long updateBlog(String title, String description, List<String> categories, String name, String profession);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    int updateBlog(Blog blog);
 
 
 //    @Insert(onConflict = REPLACE)

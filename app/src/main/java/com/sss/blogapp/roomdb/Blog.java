@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 @Entity(tableName = "blog_tbl")
-public class Blog {
+public class Blog implements Serializable {
 
     @PrimaryKey()
     @SerializedName("id")       //server db id

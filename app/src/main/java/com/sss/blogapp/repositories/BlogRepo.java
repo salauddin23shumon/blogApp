@@ -108,4 +108,15 @@ public class BlogRepo {
 
         });
     }
+
+    public void updateBlog(Blog blog){
+        databaseWriteExecutor.execute(() -> {
+            if (blogDb.dao().updateBlog(blog)>0){
+                BlogResponseLocal localRes= new BlogResponseLocal(true);
+                localResMutableLiveData.postValue(localRes);
+                Log.e(TAG, "updateBlog: inside if" );
+            }
+
+        });
+    }
 }

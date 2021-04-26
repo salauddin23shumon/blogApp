@@ -35,9 +35,10 @@ public class BlogAddFragment extends Fragment {
 
 
     private TextInputEditText titleET, descET, catET, nameET, profET;
-    private Button saveBtn;
+    private Button saveBtn, updateBtn;
     private BlogDb db;
     private BlogAddViewModel viewModel;
+    private Blog blog;
 
     private static final String TAG = "BlogAddFragment";
 
@@ -49,6 +50,10 @@ public class BlogAddFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         db=BlogDb.getInstance(context);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            blog= (Blog) bundle.getSerializable("blog");
+        }
     }
 
     @Override
@@ -67,6 +72,61 @@ public class BlogAddFragment extends Fragment {
         nameET=view.findViewById(R.id.authorNameET);
         profET=view.findViewById(R.id.profET);
         saveBtn=view.findViewById(R.id.saveBtn);
+        updateBtn=view.findViewById(R.id.updateBtn);
+
+        if (blog!=null){
+            titleET.setText(blog.getTitle());
+            descET.setText(blog.getDescription());
+            catET.setText(blog.getCategories().get(0));
+            nameET.setText(blog.getAuthor().getName());
+            profET.setText(blog.getAuthor().getProfession());
+
+            saveBtn.setVisibility(View.GONE);
+            updateBtn.setVisibility(View.VISIBLE);
+
+
+            updateBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String title=titleET.getText().toString();
+                    String desc=descET.getText().toString();
+                    String category=catET.getText().toString();
+                    String authorName=nameET.getText().toString();
+                    String profession=profET.getText().toString();
+
+                    List<String> categories=new ArrayList<>();
+                    categories.add(category);
+
+
+                    blog.getAuthor().setName(authorName);
+                    blog.getAuthor().setProfession(profession);
+//                    blog.getAuthor().setId(blog.getId());
+
+//                    blog.setId(blog.getId());
+                    blog.setTitle(title);
+                    blog.setDescription(desc);
+                    blog.setCategories(categories);
+                    blog.setAuthor(blog.getAuthor());
+
+                    if(title.isEmpty() || desc.isEmpty() || category.isEmpty() || authorName.isEmpty()|| profession.isEmpty()){
+                        Toast.makeText(getActivity(), "insert required data", Toast.LENGTH_LONG).show();
+                    }else {
+                        viewModel.updateToDb(blog);
+                        viewModel.getLocalResLiveData().observe(getViewLifecycleOwner(), new Observer<BlogResponseLocal>() {
+                            @Override
+                            public void onChanged(BlogResponseLocal blogResponseLocal) {
+                                if (blogResponseLocal.isInsert()){
+                                    Toast.makeText(getActivity(), "update success", Toast.LENGTH_SHORT).show();
+                                    Navigation.findNavController(view).popBackStack();
+                                }else {
+                                    Log.d(TAG, "onChanged: not success");
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +178,8 @@ public class BlogAddFragment extends Fragment {
                 }
             }
         });
+
+
 
     }
 }
